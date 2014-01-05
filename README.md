@@ -37,7 +37,7 @@ The result of this example is **Now is: 2014-01-05 13:13:20:09** and is formed i
 3.  'Now is: ' + '2014-01-05 13:27:10' = **'Now is: 2014-01-05 13:20:09'**
 
 ```
-require_once('../class/rpn.class.php');
+require_once('rpn.php');
 $rpn = new RPN();
 $res = $rpn->rpn("'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))");
 ```
@@ -57,7 +57,7 @@ The result of this example is **This is an EXAMPLE of a RPN statement** and is f
 5. 'This is an EXAMPLE of a RPN ' + 'statement' = **'This is an EXAMPLE of a RPN statement'**
 
 ```
-require_once('../class/rpn.class.php');
+require_once('rpn.php');
 $rpn = new RPN();
 $res = $rpn->rpn("'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))");
 ```
@@ -95,13 +95,26 @@ private $rpnar;
 
 Class Methods
 ---
-Main RPN processing method.
+1. Main RPN processing method:
 Performs the RPN conversion and calculation.
 - Input: $string - has the statement to be calculated, can be a numeric or a string
 - Output: The result of the calculation
 
 ```
 function rpn($string){...}
+```
+
+2. Register a user defined function:
+The function can accept any number of parameters.
+- Input: 
+  - $function - function name used in the Reverse Polish Notation input
+  - $callback - name of the function to call for processing, user defined of internal function
+  - $minparams - minimum parameters the function receives
+  - $maxparams - maximum parameters the function can receive
+- Output: true / false
+
+```
+function register($function, $callback, $minparams, $maxparams=null){...}
 ```
 
 Use the `printf()` function.
