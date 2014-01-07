@@ -125,7 +125,7 @@ function register($function, $callback, $minparams, $maxparams=null){...}
 
 License: The MIT License (MIT)
 ---
-Copyright (c) 2014 Ze'ev Cohen (zeevc@egpo.net)
+Copyright (c) 2014 Ze'ev Cohen (zeevc AT egpo DOT net)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
