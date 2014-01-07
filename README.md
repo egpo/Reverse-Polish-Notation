@@ -66,6 +66,12 @@ Definition
 ---
 From wikipedia: **Reverse Polish Notation (RPN)** is a mathematical notation in which every operator follows all of its operands. It is also known as postfix notation and is parenthesis-free as long as operator arities are fixed. The description "Polish" refers to the nationality of logician Jan Łukasiewicz, who invented (prefix) Polish notation in the 1920s. For more info, please visit [wikipedia] (http://en.wikipedia.org/wiki/Reverse_Polish_notation).
 
+Class Constants
+---
+Used when declaring a user defined function, to tell the class there are unlimited number of arguments when calling the function:
+```
+static $RPN_UNLIMIT = 999;
+```
 Class Variables
 ---
 A copy of the input string of the last RPN calculation:
@@ -95,40 +101,48 @@ private $rpnar;
 
 Class Methods
 ---
-1. Main RPN processing method:
-Performs the RPN conversion and calculation.
-- Input: $string - has the statement to be calculated, can be a numeric or a string
-- Output: The result of the calculation
+Main RPN processing method:
+   Performs the RPN conversion and calculation.
+   - Input: $string - has the statement to be calculated, can be a numeric or a string
+   - Output: The result of the calculation
 
 ```
 function rpn($string){...}
 ```
 
-2. Register a user defined function:
-The function can accept any number of parameters.
-- Input: 
-  - $function - function name used in the Reverse Polish Notation input
-  - $callback - name of the function to call for processing, user defined of internal function
-  - $minparams - minimum parameters the function receives
-  - $maxparams - maximum parameters the function can receive
-- Output: true / false
+Register a user defined function:
+   The function can accept any number of parameters.
+   - Input: 
+     - $function - function name used in the Reverse Polish Notation input
+     - $callback - name of the function to call for processing, user defined of internal function
+     - $minparams - minimum parameters the function receives
+     - $maxparams - maximum parameters the function can receive
+   - Output: true / false
 
 ```
 function register($function, $callback, $minparams, $maxparams=null){...}
 ```
 
-Use the `printf()` function.
-``There is a literal backtick (`) here.``
+License: The MIT License (MIT)
+---
+Copyright (c) 2014 Ze'ev Cohen (zeevc@egpo.net)
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-`code`
-``code``
-block quote
-> one
-> two
-> three
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-In this README
-function rpn($string)
-
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+ 
+http://opensource.org/licenses/MIT
