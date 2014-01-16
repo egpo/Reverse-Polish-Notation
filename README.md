@@ -122,6 +122,11 @@ Register a user defined function:
 ```
 function register($function, $callback, $minparams, $maxparams=null){...}
 ```
+**Example:**
+```
+$rpn->register('nword','my_word2',2,3);
+$res = $rpn->rpn("nword('one,two,three,four',2)+' '+nword('one,two,three,four',4)");
+```
 
 License: The MIT License (MIT)
 ---
