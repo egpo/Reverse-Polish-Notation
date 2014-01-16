@@ -6,7 +6,7 @@ This PHP class implements a Reverse Polish notation (RPN) evaluation that suppor
 
 ##### Some Examples:
 ##### 1. A numeric example:
-- Expression:  "5 + ((1 + 2) * 4) − 3"
+- Expression:  **5 + ((1 + 2) * 4) − 3**
 
 ######RPN representation:
 - 5 1 2 + 4 * + 3 -
@@ -25,7 +25,7 @@ $res = $rpn->rpn("5 + ((1 + 2) * 4) - 3");
 ```
 
 ##### 2. A 'date' and 'strtotime' functions example:
-- Expression: "'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))"
+- Expression: **'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))**
 
 ######RPN representation:
 - 'Now is: ' 'Y-m-d H:i:s' 'Now' strtotime date_ +
@@ -43,7 +43,7 @@ $res = $rpn->rpn("'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))");
 ```
 
 ##### 3. A string example:
-- Expression:  "'This is an '+upper('example')+' of a RPN '+lower('STATEMENT')"
+- Expression:  **'This is an '+upper('example')+' of a RPN '+lower('STATEMENT')**
 
 ######RPN representation:
 - 'This is an ' 'example' upper + ' of a RPN ' + 'STATEMENT' lower +
