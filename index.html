@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta charset="UTF-8">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<title>rpn - Reverse Polish notation PHP class with live examples</title>
+<script src="liverpn.js"></script>
+</head>
+<body>
+<h1 style="font-size: 2.5em; margin-top: 0px !important; margin-right: 0px; margin-bottom: 15px; margin-left: 0px; line-height: 1.7; padding: 0px; font-weight: bold; cursor: text; position: relative; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(221, 221, 221); color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+rpn - Reverse Polish notation PHP class</h1>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+This PHP class implements a Reverse Polish notation (RPN) expression evaluation 
+that supports numeric, strings and user defined functions as well as built-in 
+PHP functions for numeric/string manipulation.</p>
+<h5 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+The class can be downloaded from my GitHub repository,
+<a href="https://github.com/egpo/rpn" target="_new">RPN</a><span style="color: #333333">, my
+</span><a href="http://www.linkedin.com/pub/zeev-cohen/1/511/87b" target="_new"> 
+<img src="http://s.c.lnkd.licdn.com/scds/common/u/img/logos/logo_linkedin_92x22.png" border="0"></a> profile.</h5>
+<table border="1" cellspacing="0" cellpadding="10">
+	<tr>
+		<td><p style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Live RPN expression evaluation:</p>
+<p style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<table border="0" width="571">
+		<tr>
+			<td align="left" width="1%">
+			<input type="text" size="67" id="expression" placeholder="Enter your expression here"></td>
+			<td id="result" align="left" width="1%">
+			<input type="button" value="Evaluate" id="evaluate"></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			<table border="0" width="100%" cellspacing="0" cellpadding="5">
+				<tr>
+					<td align="left" width="1%">RES:</td>
+					<td id="res">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="left" width="1%">RPN:</td>
+					<td id="rpn">&nbsp;</td>
+				</tr>
+			</table>
+			</td>
+		</tr>
+	</table></td>
+	</tr>
+</table>
+	</p>
+<h5 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="some-examples" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#some-examples">
+</a>Some Examples:</h5>
+<h5 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="1-a-numeric-example" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#1-a-numeric-example">
+</a>1. A numeric example:</h5>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>Expression: <b>5 + ((1 + 2) * 4) - 3</b></li>
+</ul>
+<h6 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(119, 119, 119); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="rpn-representation" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#rpn-representation">
+</a>RPN representation:</h6>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>5 1 2 + 4 * + 3 -</li>
+</ul>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+The result of this example is<span class="Apple-converted-space">&nbsp;</span><strong style="font-weight: bold;">14</strong><span class="Apple-converted-space">&nbsp;</span>and 
+is calculated in the following manner:</p>
+<ol style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>1+2 = 3</li>
+	<li>3*4 = 12</li>
+	<li>12+5 = 17</li>
+	<li>17-3 =<span class="Apple-converted-space">&nbsp;</span><strong style="font-weight: bold;">14</strong></li>
+</ol>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">require_once('nsfRPN.php');
+$rpn = new nsfRPN();
+$res = $rpn-&gt;rpn(&quot;5 + ((1 + 2) * 4) - 3&quot;);
+</code></pre>
+<h5 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="2-a-date-and-strtotime-functions-example" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#2-a-date-and-strtotime-functions-example">
+</a>2. A 'date' and 'strtotime' functions example:</h5>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>Expression: <b>'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))</b></li>
+</ul>
+<h6 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(119, 119, 119); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="rpn-representation-1" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#rpn-representation-1">
+</a>RPN representation:</h6>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>'Now is: ' 'Y-m-d H:i:s' 'Now' strtotime date_ +</li>
+</ul>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+The result of this example is<span class="Apple-converted-space">&nbsp;</span><strong style="font-weight: bold;">Now 
+is: 2014-01-05 13:13:20:09</strong><span class="Apple-converted-space">&nbsp;</span>and 
+is formed in this way:</p>
+<ol style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>strtotime('Now') = 1388928430</li>
+	<li>date_2('Y-m-d H:i:s', 1388928430) = '2014-01-05 13:27:10'</li>
+	<li>'Now is: ' + '2014-01-05 13:27:10' =<span class="Apple-converted-space">&nbsp;</span><strong style="font-weight: bold;">'Now 
+	is: 2014-01-05 13:20:09'</strong></li>
+</ol>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">require_once('nsfRPN.php');
+$rpn = new nsfRPN();
+$res = $rpn-&gt;rpn(&quot;'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))&quot;);
+</code></pre>
+<h5 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="3-a-string-example" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#3-a-string-example">
+</a>3. A string example:</h5>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>Expression: <b>'This is an '+upper('example')+' of a RPN '+lower('STATEMENT')</b></li>
+</ul>
+<h6 style="margin: 1em 0px 15px; line-height: 25px; font-size: 1em; padding: 0px; font-weight: bold; cursor: text; position: relative; color: rgb(119, 119, 119); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="rpn-representation-2" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#rpn-representation-2">
+</a>RPN representation:</h6>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>'This is an ' 'example' upper + ' of a RPN ' + 'STATEMENT' lower +</li>
+</ul>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+The result of this example is<span class="Apple-converted-space">&nbsp;</span><strong style="font-weight: bold;">This 
+is an EXAMPLE of a RPN statement</strong><span class="Apple-converted-space">&nbsp;</span>and 
+is formed in this way:</p>
+<ol style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>upper('example') === strtoupper('example') = 'EXAMPLE'</li>
+	<li>'This is an ' + 'EXAMPLE' = 'This is an EXAMPLE'</li>
+	<li>'This is an EXAMPLE' + ' of a RPN ' = 'This is an EXAMPLE of a RPN '</li>
+	<li>lower('STATEMENT') === strtolower('STATEMENT') = 'statement'</li>
+	<li>'This is an EXAMPLE of a RPN ' + 'statement' =<span class="Apple-converted-space">&nbsp;</span><strong style="font-weight: bold;">'This 
+	is an EXAMPLE of a RPN statement'</strong></li>
+</ol>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">require_once('nsfRPN.php');
+$rpn = new nsfRPN();
+$res = $rpn-&gt;rpn(&quot;'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))&quot;);
+</code></pre>
+<h2 style="margin: 1em 0px 15px; line-height: 1.7; font-size: 2em; padding: 0px; font-weight: bold; cursor: text; position: relative; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="definition" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#definition">
+</a>Definition</h2>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+From wikipedia:<span class="Apple-converted-space">&nbsp;</span><strong style="font-weight: bold;">Reverse 
+Polish Notation (RPN)</strong><span class="Apple-converted-space">&nbsp;</span>is a 
+mathematical notation in which every operator follows all of its operands. It is 
+also known as postfix notation and is parenthesis-free as long as operator 
+arities are fixed. The description &quot;Polish&quot; refers to the nationality of 
+logician Jan &#321;ukasiewicz, who invented (prefix) Polish notation in the 1920s. 
+For more info, please visit<span class="Apple-converted-space">&nbsp;</span><a style="color: rgb(65, 131, 196); text-decoration: none;" href="http://en.wikipedia.org/wiki/Reverse_Polish_notation">wikipedia</a>.</p>
+<h2 style="margin: 1em 0px 15px; line-height: 1.7; font-size: 2em; padding: 0px; font-weight: bold; cursor: text; position: relative; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="class-constants" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#class-constants">
+</a>Class Constants</h2>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Used when declaring a user defined function, to tell the class there are 
+unlimited number of arguments when calling the function:</p>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">static $RPN_UNLIMIT = 999;
+</code></pre>
+<h2 style="margin: 1em 0px 15px; line-height: 1.7; font-size: 2em; padding: 0px; font-weight: bold; cursor: text; position: relative; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="class-variables" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#class-variables">
+</a>Class Variables</h2>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+A copy of the input string of the last RPN calculation:</p>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">public $input='';
+</code></pre>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+The Reverse Polish notation conversion:</p>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">public $rpn='';
+</code></pre>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+The result of the Polish Notation calculation:</p>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">public $res='';
+</code></pre>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+An array of the supported operators available for calculation with their weight 
+prec·e·dence:</p>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">private $operators = array('^' =&gt; 1, '*' =&gt; 2, '/' =&gt; 2, '+' =&gt; 3, '-' =&gt; 3);
+</code></pre>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Array with all the available functions, including the user defined functions and 
+the PHP internal functions:</p>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">private $functions;
+</code></pre>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Internal array built for faster execution of the RPN calculation:</p>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">private $rpnar;
+</code></pre>
+<h2 style="margin: 1em 0px 15px; line-height: 1.7; font-size: 2em; padding: 0px; font-weight: bold; cursor: text; position: relative; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="class-methods" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#class-methods">
+</a>Class Methods</h2>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Main RPN processing method: Performs the RPN conversion and calculation.</p>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>Input: $string - has the statement to be calculated, can be a numeric or 
+	a string</li>
+	<li>Output: The result of the calculation</li>
+</ul>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">function rpn($string){...}
+</code></pre>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Register a user defined function: The function can accept any number of 
+parameters.</p>
+<ul style="padding: 0px 0px 0px 30px; margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+	<li>Input:<ul style="padding: 0px 0px 0px 30px; margin: 0px;">
+		<li>$function - function name used in the Reverse Polish Notation input</li>
+		<li>$callback - name of the function to call for processing, user 
+		defined of internal function</li>
+		<li>$minparams - minimum parameters the function receives</li>
+		<li>$maxparams - maximum parameters the function can receive</li>
+	</ul>
+	</li>
+	<li>Output: true / false</li>
+</ul>
+<pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">function register($function, $callback, $minparams, $maxparams=null){...}
+</code></pre><b>Example:</b></b><pre style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 13px; margin: 15px 0px; background-color: rgb(248, 248, 248); border: 1px solid rgb(221, 221, 221); line-height: 19px; overflow: auto; padding: 6px 10px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;"><code style="font-family: Consolas, 'Liberation Mono', Courier, monospace; font-size: 12px; margin: 0px; padding: 0px; border: none; background-color: transparent; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; white-space: pre; word-wrap: normal; background-position: initial initial; background-repeat: initial initial;">$rpn->register('nword','my_word2',2,3);
+$res = $rpn->rpn("nword('one,two,three,four',2)+' '+nword('one,two,three,four',4)");
+</code></pre>
+<h2 style="margin: 1em 0px 15px; line-height: 1.7; font-size: 2em; padding: 0px; font-weight: bold; cursor: text; position: relative; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-style: normal; font-variant: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a name="license-the-mit-license-mit" class="anchor" style="color: rgb(65, 131, 196); text-decoration: none; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; cursor: pointer; position: absolute; top: 0px; left: 0px; bottom: 0px;" href="https://github.com/egpo/rtn/edit/master/README.md#license-the-mit-license-mit">
+</a>License: The MIT License (MIT)</h2>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Copyright (c) 2014 Ze'ev Cohen (zeevc AT egpo DOT net)</p>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+Permission is hereby granted, free of charge, to any person obtaining a copy of 
+this software and associated documentation files (the &quot;Software&quot;), to deal in 
+the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
+the Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:</p>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software.</p>
+<p style="margin: 15px 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<p style="margin-top: 15px; margin-right: 0px; margin-bottom: 0px !important; margin-left: 0px; color: rgb(51, 51, 51); font-family: Helvetica, arial, freesans, clean, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 25px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+<a style="color: rgb(65, 131, 196); text-decoration: none;" href="http://opensource.org/licenses/MIT">
+http://opensource.org/licenses/MIT</a></p>
+&nbsp;<p>&nbsp;</p>
+<p>More cool stuff can be found here: <a href="http://dev.egpo.net">
+http://dev.egpo.net</a> </p>
+<p>Please visit my <a href="http://www.linkedin.com/pub/zeev-cohen/1/511/87b"> 
+<img src="http://s.c.lnkd.licdn.com/scds/common/u/img/logos/logo_linkedin_92x22.png" border="0"></a> profile to learn more. </p>
+<p><font face="Times New Roman">© 2014 - Ze'ev Cohen</font></p>
+<p>&nbsp;</p>
+
+		
+</body>
+</html>
