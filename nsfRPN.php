@@ -46,17 +46,19 @@ class nsfRPN {
 	
 	private $operators = array('^' => 1, '*' => 2, '/' => 2, '+' => 3, '-' => 3);
 	private $functions;
-	
+	private $user_callback_obj;
+	private $user_callback_func;	
 	private $rpnar;
 	
 	function __construct() {
 		$this->functions = array();
-		$this->functions['upper'] 		= array('minparams' => 1, 'maxparams' => 1, 'callback' => 'strtoupper');
-		$this->functions['lower'] 		= array('minparams' => 1, 'maxparams' => 1, 'callback' => 'strtolower');
-		$this->functions['substr']		= array('minparams' => 2, 'maxparams' => 3, 'callback' => 'substr');
-		$this->functions['date']   		= array('minparams' => 1, 'maxparams' => 2, 'callback' => 'date');
-		$this->functions['time']   		= array('minparams' => 0, 'maxparams' => 0, 'callback' => 'time');
-		$this->functions['strtotime']   = array('minparams' => 1, 'maxparams' => 2, 'callback' => 'strtotime');
+		$this->functions['upper'] 		  = array('minparams' => 1, 'maxparams' => 1, 'callback' => 'strtoupper');
+		$this->functions['lower'] 		  = array('minparams' => 1, 'maxparams' => 1, 'callback' => 'strtolower');
+		$this->functions['substr']		  = array('minparams' => 2, 'maxparams' => 3, 'callback' => 'substr');
+		$this->functions['date']   		  = array('minparams' => 1, 'maxparams' => 2, 'callback' => 'date');
+		$this->functions['time']   		  = array('minparams' => 0, 'maxparams' => 0, 'callback' => 'time');
+		$this->functions['strtotime']     = array('minparams' => 1, 'maxparams' => 2, 'callback' => 'strtotime');
+		$this->functions['number'] = array('minparams' => 1, 'maxparams' => 4, 'callback' => 'number_format');
 		
 		$this->functions['max']    = array('minparams' => 2, 'maxparams' => self::RPN_UNLIMIT, 'callback' => 'max');
 		$this->functions['min']    = array('minparams' => 2, 'maxparams' => self::RPN_UNLIMIT, 'callback' => 'min');
@@ -74,6 +76,8 @@ class nsfRPN {
 		$this->functions['word']   = array('minparams' => 2, 'maxparams' => 3, 'callback' => 'my_word');
 		
 		$this->input = '';
+		$this->user_callback_obj  = null;
+		$this->user_callback_func = '';	
 		$this->rpnar = array();
 	}
 
@@ -85,6 +89,7 @@ class nsfRPN {
 	function rpn($string){
 		$string = str_replace(array("\'", '\"'), array("'", '"'), $string);
 		$this->input = $string;
+		$this->res = '';
 	
 		$this->rpn = $this->str2rpn();
 		$this->res = $this->rpn2res();
@@ -111,6 +116,33 @@ class nsfRPN {
 		
 		return true;
 	}
+	
+	/**
+	 * user defined function for vairable evaluation
+	 * $function - function name used in the Reverse Polish Notation input
+	 * $callback - name of the function to call for processing
+	 * $minparams - minimum parameters the function recieves
+	 * $maxparams - maxmimum parameters the function can recieve
+	 * @return boolean
+	 */
+	function user_callback($func, $obj=null)
+	{
+		if ($obj){
+			if (!method_exists($obj,$func)){
+				return false;
+			}
+			$this->user_callback_obj  = $obj;
+			$this->user_callback_func = $func;
+		} else {
+			if (!function_exists($func)){
+				return false;
+			}
+			$this->user_callback_obj  = null;
+			$this->user_callback_func = $func;
+		}
+		return true;
+	}
+	
 		
 	/**
 	 * str2rpn - Method that converts the input string into Reverse Polish Notation statement
@@ -138,6 +170,7 @@ class nsfRPN {
 		$fpcntar = array();
 		$fpcnt = false;
 		
+		$last_dl = false;
 		foreach($tokens as $idx => $token){
 			$tkn1 = $token;
 			$tkn2 = $token[1];
@@ -147,13 +180,33 @@ class nsfRPN {
 					$fpcnt = true;
 					continue;
 				}
+				if ($last_dl){
+					$rpn = rtrim($rpn).$token[1] . ' ';
+					$this->rpnar[key($this->rpnar)][1] .= $token[1];
+					$last_dl = false;
+					continue;
+				}
+				
 				$token_func = array_key_exists($token[1], $this->functions);
+				if (!$token_func && ($token[1][0] == '$')){
+					$last_dl = true;
+				}
 			} else {
 				$token = trim($token);
 				if (($token == null) || ($token == ',')){
 					$fpcnt = true;
 					continue;
 				}
+				if ($last_dl){
+					if ($token == '.'){
+						$rpn = rtrim($rpn).'.' . ' ';
+						$this->rpnar[key($this->rpnar)][1] .= '.';
+						continue;
+					} else {
+						$last_dl = false;
+					}
+				}
+				
 				$token_func = array_key_exists($token, $this->functions);
 			}
 /*			
@@ -176,7 +229,11 @@ class nsfRPN {
 					$this->rpnar[] = array(self::RPN_OPERAND, trim($token[1], '"\''));
 				}
 				if ($fpcnt){
-					$fpcntar[$ident]++;
+					if (isset($fpcntar[$ident])){
+						$fpcntar[$ident]++;
+					} else {
+						$fpcntar[$ident]=1;
+					}
 				}
 				$unary = '';
 				$prev_op = false;
@@ -315,7 +372,16 @@ class nsfRPN {
 			$curr = current($this->rpnar);
 			switch($curr[0]){
 				case self::RPN_OPERAND:{
-					$calc[] = $curr[1];
+					if (($curr[1][0] == '$') && ($this->user_callback_func != '')){
+						if (is_null($this->user_callback_obj)){
+							$calc[] = call_user_func_array($this->user_callback_func, array(substr($curr[1],1)));
+						} else {
+							$calc[] = call_user_func_array(array($this->user_callback_obj, $this->user_callback_func), array(substr($curr[1],1)));
+//							$calc[] = call_user_func_array($this->varval, array(substr($curr[1],1)));
+						}				
+					} else {
+						$calc[] = $curr[1];
+					}
 					next($this->rpnar);
 				} break;
 				case self::RPN_OPERATOR:{
