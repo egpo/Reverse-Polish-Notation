@@ -1,11 +1,12 @@
 <?php
 
 /** 
- * This PHP class implements a Reverse Polish notation (RPN) statement that supports numeric,
+ * nsfRPN.php: This PHP class implements a Reverse Polish notation (RPN) statement that supports numeric,
  * strings and user defined functions as well as built-in PHP functions for numeric/string manipulation.
  * 
  * Written by Ze'ev Cohen (zeevc AT egpo DOT net)
  * http://dev.egpo.net
+ * https://github.com/egpo
  * 
  * 
  * License: The MIT License (MIT)
@@ -32,6 +33,17 @@
  * http://opensource.org/licenses/MIT
  */
 
+if (!function_exists('is_word')) {
+	function is_word($str){
+		if (($str[0] == '"') && ($str[strlen($str)-1]) == '"'){
+			return true;
+		}
+		if (($str[0] == "'") && ($str[strlen($str)-1]) == "'"){
+			return true;
+		}
+		return false;
+	}
+}
 
 class nsfRPN {
 	const RPN_UNLIMIT = 999; // When registering a function that accepts unlimited arguments
@@ -39,6 +51,12 @@ class nsfRPN {
 	public $input='';
 	public $rpn='';
 	public $res='';
+	public $err=0;
+	
+	const RPN_ERR_PARAMS = 1;  // Wrong number of params for a function
+	const RPN_ERR_DIVZERO = 2; // Division by Zero
+	const RPN_ERR_NUMREQ = 3;  // Numeric is expected
+	const RPN_ERR_OPERAND = 4; // Operand is expected, might be non existance function
 
 	const RPN_OPERAND = 0;
 	const RPN_OPERATOR = 1;
@@ -58,7 +76,8 @@ class nsfRPN {
 		$this->functions['date']   		  = array('minparams' => 1, 'maxparams' => 2, 'callback' => 'date');
 		$this->functions['time']   		  = array('minparams' => 0, 'maxparams' => 0, 'callback' => 'time');
 		$this->functions['strtotime']     = array('minparams' => 1, 'maxparams' => 2, 'callback' => 'strtotime');
-		$this->functions['number'] = array('minparams' => 1, 'maxparams' => 4, 'callback' => 'number_format');
+		$this->functions['number']        = array('minparams' => 1, 'maxparams' => 4, 'callback' => 'number_format');
+		$this->functions['wrap']          = array('minparams' => 1, 'maxparams' => 4, 'callback' => 'wordwrap');
 		
 		$this->functions['max']    = array('minparams' => 2, 'maxparams' => self::RPN_UNLIMIT, 'callback' => 'max');
 		$this->functions['min']    = array('minparams' => 2, 'maxparams' => self::RPN_UNLIMIT, 'callback' => 'min');
@@ -91,9 +110,15 @@ class nsfRPN {
 		$this->input = $string;
 		$this->res = '';
 	
-		$this->rpn = $this->str2rpn();
-		$this->res = $this->rpn2res();
-		return $this->res;
+		if ($rpn = $this->str2rpn()){
+			if (!($this->rpn2res() === false)){
+				return $this->res;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -160,6 +185,7 @@ class nsfRPN {
 		$tokens = token_get_all('<?php ' . $this->input);
 		array_shift($tokens);
 
+		$this->err = 0;
 		$rpn = '';
 		$unary='';
 		$prev_op = false;
@@ -172,8 +198,8 @@ class nsfRPN {
 		
 		$last_dl = false;
 		foreach($tokens as $idx => $token){
-			$tkn1 = $token;
-			$tkn2 = $token[1];
+//			$tkn1 = $token;
+//			$tkn2 = $token[1];
 			if (is_array($token)){
 				$token[1] = trim($token[1]);
 				if ($token[1] == null){
@@ -209,24 +235,20 @@ class nsfRPN {
 				
 				$token_func = array_key_exists($token, $this->functions);
 			}
-/*			
-			if(!empty($token)){
-				if(is_array($token)){
-					$token_func = array_key_exists($token[1], $this->functions);
-				} else {
-					$token_func = array_key_exists($token, $this->functions);
-				}
-			} else {
-				$token_func = false;
-			}
-*/
 			if(is_array($token) && !$token_func) {
 				if ($unary != ''){
 					$rpn .= $unary.$token[1] . ' ';
 					$this->rpnar[] = array(self::RPN_OPERAND, trim($unary.$token[1], '"\''));
 				} else {
-					$rpn .= $token[1] . ' ';
-					$this->rpnar[] = array(self::RPN_OPERAND, trim($token[1], '"\''));
+					if (is_numeric($token[1]) || is_word($token[1]) || ($token[1][0] == '$')){
+						$rpn .= $token[1] . ' ';
+						$this->rpnar[] = array(self::RPN_OPERAND, trim($token[1], '"\''));
+					} else {
+						$this->err = self::RPN_ERR_OPERAND;
+						$this->rpn = trim($rpn);
+						$this->res = null;
+						return false;
+					}
 				}
 				if ($fpcnt){
 					if (isset($fpcntar[$ident])){
@@ -250,9 +272,9 @@ class nsfRPN {
 					}
 				}
 								
-					if(empty($stack) || ($token == '(') || $token_func){
-					if (is_array($token))
-					{	$stack[] = $token[1];
+				if(empty($stack) || ($token == '(') || $token_func){
+					if (is_array($token)){
+						$stack[] = $token[1];
 					} else {
 						$stack[] = $token;
 					}
@@ -297,15 +319,19 @@ class nsfRPN {
 							$token_func = array_key_exists($stk, $this->functions);
 							if ($token_func){
 								if (array_key_exists($stk, $this->functions)){
+									if (($fpcntar[$ident] < $this->functions[$stk]['minparams']) || ($fpcntar[$ident] > $this->functions[$stk]['maxparams'])){
+										$this->err = self::RPN_ERR_PARAMS;
+										$this->rpn = trim($rpn);
+										return false;
+									} 									
+									
 									$extraparams = $fpcntar[$ident] > $this->functions[$stk]['minparams'];
 									$this->rpnar[] = array(self::RPN_FUNCTION, array($stk,$fpcntar[$ident]));
-									
-									unset($fpcntar[$ident]);
-									$ident--;
 									
 									if ($extraparams){
 										$stk .= '_'.$fpcntar[$ident];
 									}
+									unset($fpcntar[$ident]);$ident--;
 								}
 							} else {
 								$this->rpnar[] = array(self::RPN_OPERATOR, $stk);
@@ -356,7 +382,8 @@ class nsfRPN {
 			$rpn .= $stk . ' ';
 		}
 	
-		return trim($rpn);
+		$this->rpn = trim($rpn);
+		return $this->rpn;
 	}
 	
 
@@ -377,7 +404,6 @@ class nsfRPN {
 							$calc[] = call_user_func_array($this->user_callback_func, array(substr($curr[1],1)));
 						} else {
 							$calc[] = call_user_func_array(array($this->user_callback_obj, $this->user_callback_func), array(substr($curr[1],1)));
-//							$calc[] = call_user_func_array($this->varval, array(substr($curr[1],1)));
 						}				
 					} else {
 						$calc[] = $curr[1];
@@ -390,27 +416,33 @@ class nsfRPN {
 							$op2 = array_pop($calc);
 							$op1 = array_pop($calc);
 							if (is_numeric($op1) && is_numeric($op2)){
-									$res = $op1+$op2;
+									$this->res = $op1+$op2;
 								} else {
-									$res = $op1.$op2;
+									$this->res = $op1.$op2;
 								}
 						} break;
 						case '-':{
 							$op2 = array_pop($calc);
 							$op1 = array_pop($calc);
 							if (is_numeric($op1) && is_numeric($op2)){
-									$res = $op1-$op2;
+									$this->res = $op1-$op2;
 								} else {
-									$res = 'Numeric is expected';
+									$this->err = self::RPN_ERR_NUMREQ;
+									$this->rpn = trim($rpn);
+									$this->res = null;
+									return false;
 								}
 						} break;
 						case '*':{
 							$op2 = array_pop($calc);
 							$op1 = array_pop($calc);
 							if (is_numeric($op1) && is_numeric($op2)){
-								$res = $op1*$op2;
+								$this->res = $op1*$op2;
 							} else {
-								$res = 'Numeric is expected';
+								$this->err = self::RPN_ERR_NUMREQ;
+								$this->rpn = trim($rpn);
+								$this->res = null;
+								return false;
 							}
 						} break;
 						case '/':{
@@ -418,26 +450,35 @@ class nsfRPN {
 							$op1 = array_pop($calc);
 							if (is_numeric($op1) && is_numeric($op2)){
 								if ($op2 != 0){
-									$res = $op1/$op2;
+									$this->res = $op1/$op2;
 								} else {
-									$res = 'Division by zero';
+									$this->err = self::RPN_ERR_DIVZERO;
+									$this->rpn = trim($rpn);
+									$this->res = null;
+									return false;									
 								}
 							} else {
-								$res = 'Numeric is expected';
+								$this->err = self::RPN_ERR_NUMREQ;
+								$this->rpn = trim($rpn);
+								$this->res = null;
+								return false;									
 							}
 						} break;
 						case '^':{
 							$op2 = array_pop($calc);
 							$op1 = array_pop($calc);
 							if (is_numeric($op1) && is_numeric($op2)){
-								$res = pow($op1,$op2);
+								$this->res = pow($op1,$op2);
 							} else {
-								$res = 'Numeric is expected';
+								$this->err = self::RPN_ERR_NUMREQ;
+								$this->rpn = trim($rpn);
+								$this->res = null;
+								return false;									
 							}
 						} break;
 					}
 					
-					$calc[] = $res;
+					$calc[] = $this->res;
 					next($this->rpnar);
 				} break;
 				case self::RPN_FUNCTION:{
@@ -455,7 +496,8 @@ class nsfRPN {
 				} break;
 			}
 		}
-		return $calc[0];
+		$this->res = $calc[0];
+		return $this->res;
 	}
 }
 
