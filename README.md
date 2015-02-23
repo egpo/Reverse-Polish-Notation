@@ -19,7 +19,7 @@ The result of this example is **14** and is calculated in the following manner:
 4. 17-3 = **14**
 
 ```
-require_once('rpn.php');
+require_once('nsfRPN.php');
 $rpn = new RPN();
 $res = $rpn->rpn("5 + ((1 + 2) * 4) - 3");
 ```
@@ -37,7 +37,7 @@ The result of this example is **Now is: 2014-01-05 13:13:20:09** and is formed i
 3.  'Now is: ' + '2014-01-05 13:27:10' = **'Now is: 2014-01-05 13:20:09'**
 
 ```
-require_once('rpn.php');
+require_once('nsfRPN.php');
 $rpn = new RPN();
 $res = $rpn->rpn("'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))");
 ```
@@ -57,7 +57,7 @@ The result of this example is **This is an EXAMPLE of a RPN statement** and is f
 5. 'This is an EXAMPLE of a RPN ' + 'statement' = **'This is an EXAMPLE of a RPN statement'**
 
 ```
-require_once('rpn.php');
+require_once('nsfRPN.php');
 $rpn = new RPN();
 $res = $rpn->rpn("'Now is: '+date('Y-m-d H:i:s',strtotime('Now'))");
 ```
